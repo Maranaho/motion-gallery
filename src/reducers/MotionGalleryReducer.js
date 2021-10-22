@@ -1,13 +1,13 @@
 let initialMotionGalleryState = {
-  updateVis:false,
+  isIntuitEmployee:false,
 }
 const MotionGalleryReducer = (state, action) => {
   switch (action.type) {
 
-    case 'SET_FILEKEY':
-      let SET_FILEKEY = {...state}
-      SET_FILEKEY.figmaFile= action.payload
-    return SET_FILEKEY;
+    case 'IS_FAM':
+      let IS_FAM = {...state}
+      IS_FAM.isIntuitEmployee= action.payload
+    return IS_FAM;
 
 
     default: throw new Error('Unexpected action');

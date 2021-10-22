@@ -1,32 +1,40 @@
-import { useContext,useEffect,useState } from 'react'
-import FireBaseInit from './Utils/FireBaseInit'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/auth'
+import { useReducer,useEffect,useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
 import MotionGalleryStateContext from './context/MotionGalleryStateContext'
 import MotionGalleryDispatchContext from './context/MotionGalleryDispatchContext'
+import MotionGalleryReducer, { initialMotionGalleryState } from './reducers/MotionGalleryReducer'
+import { auth } from './utils/firebase'
 import './App.css'
 
-const auth = firebase.auth()
-const firestore = firebase.firestore()
+import SignIn from './components/SignIn'
+import Gallery from './components/Gallery'
+import NonIntuitUser from './components/NonIntuitUser'
 
 const App = ()=>{
   const [user] = useAuthState(auth)
-  const dispatch = useContext(MotionGalleryDispatchContext)
-  const { figmaData,figmaFile,loading,token,me } = useContext(MotionGalleryStateContext)
-  const galleryDB = firestore.collection('motion-gallery')
-  const [assetsCollection] = useCollectionData(galleryDB,{idField:'id'})
+  const [state, dispatch] = useReducer(MotionGalleryReducer, initialMotionGalleryState)
+  const { isIntuitEmployee } = state
 
+  const getUser =()=>{
+    if(user){
+      const { displayName,email } = user
+      const isFam = email.indexOf('@intuit.com') !== -1
+      if(isFam !== isIntuitEmployee)dispatch({type:'IS_FAM',payload:isFam})
+    } else dispatch({type:'IS_FAM',payload:false})
+  }
 
-    useEffect(()=>firebase.initializeApp(FireBaseInit),[])
+useEffect(getUser,[user])
+
   return (
-    <main className="motionGallery">
-      <TopBar/>
-      {user?<SignIn/>:<Gallery/>}
-    </main>
-  )
+    <MotionGalleryDispatchContext.Provider value={dispatch}>
+        <MotionGalleryStateContext.Provider value={state}>
+          <main className="motionGallery">
+            {user&&!isIntuitEmployee&&<NonIntuitUser/>}
+            {user&&isIntuitEmployee?<Gallery/>:<SignIn/>}
+          </main>
+        </MotionGalleryStateContext.Provider>
+      </MotionGalleryDispatchContext.Provider>
+    )
 }
 
 export default App
