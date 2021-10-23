@@ -11,15 +11,17 @@ import Gallery from './components/Gallery'
 import NonIntuitUser from './components/NonIntuitUser'
 
 const App = ()=>{
+  //@TODO get rid of useAuthState dependency
   const [user] = useAuthState(auth)
   const [state, dispatch] = useReducer(MotionGalleryReducer, initialMotionGalleryState)
-  const { isIntuitEmployee } = state
+  const { isIntuitEmployee,org } = state
 
   const getUser =()=>{
     if(user){
-      const { displayName,email } = user
-      const isFam = email.indexOf('@intuit.com') !== -1
-      if(isFam !== isIntuitEmployee)dispatch({type:'IS_FAM',payload:isFam})
+      const { displayName,email,photoURL } = user
+      const isFam = email.indexOf(org) !== -1
+      if(isFam !== isIntuitEmployee) dispatch({type:'IS_FAM',payload:isFam})
+      dispatch({type:'USER',payload:{displayName,email,photoURL}})
     } else dispatch({type:'IS_FAM',payload:false})
   }
 
@@ -27,14 +29,17 @@ useEffect(getUser,[user])
 
   return (
     <MotionGalleryDispatchContext.Provider value={dispatch}>
-        <MotionGalleryStateContext.Provider value={state}>
-          <main className="motionGallery">
-            {user&&!isIntuitEmployee&&<NonIntuitUser/>}
-            {user&&isIntuitEmployee?<Gallery/>:<SignIn/>}
-          </main>
-        </MotionGalleryStateContext.Provider>
-      </MotionGalleryDispatchContext.Provider>
-    )
+      <MotionGalleryStateContext.Provider value={state}>
+
+        <main className="motionGallery">
+          {user&&!isIntuitEmployee&&<NonIntuitUser/>}
+          {user&&isIntuitEmployee?<Gallery/>:<SignIn/>}
+        </main>
+
+
+      </MotionGalleryStateContext.Provider>
+    </MotionGalleryDispatchContext.Provider>
+  )
 }
 
 export default App

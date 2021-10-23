@@ -3,13 +3,14 @@ import 'firebase/auth'
 
 const SignIn = ()=>{
   const auth = firebase.auth()
-  const SignInWithGoogle=()=>{
+
+  const signInWithGoogle=()=>{
     const provider = new firebase.auth.GoogleAuthProvider()
     auth.signInWithPopup(provider)
   }
   return (
     <main className="SignIn">
-      <button onClick={SignInWithGoogle} >Sign in</button>
+      <button onClick={signInWithGoogle}>Sign in</button>
     </main>
   )
 }

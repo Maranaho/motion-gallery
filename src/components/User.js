@@ -1,14 +1,13 @@
 import { useContext } from 'react'
 import MotionGalleryStateContext from '../context/MotionGalleryStateContext'
-import MotionGalleryDispatchContext from '../context/MotionGalleryDispatchContext'
-
-import SignOut from './SignOut'
-import SignIn from './SignIn'
 
 const User = ()=>{
+  const { user } = useContext(MotionGalleryStateContext)
+  const { displayName,email,photoURL } = user
   return (
     <main className="User">
-      User
+      {displayName}
+      <img src={photoURL} alt={displayName} width="40"/>
     </main>
   )
 }
