@@ -1,9 +1,9 @@
 import { useReducer,useEffect,useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import MotionGalleryStateContext from './context/MotionGalleryStateContext'
 import MotionGalleryDispatchContext from './context/MotionGalleryDispatchContext'
 import MotionGalleryReducer, { initialMotionGalleryState } from './reducers/MotionGalleryReducer'
 import { auth } from './utils/firebase'
+import useAuth from './hooks/useAuth'
 import './App.css'
 
 import SignIn from './components/SignIn'
@@ -11,8 +11,7 @@ import Gallery from './components/Gallery'
 import NonIntuitUser from './components/NonIntuitUser'
 
 const App = ()=>{
-  //@TODO get rid of useAuthState dependency
-  const [user] = useAuthState(auth)
+  const user = useAuth()
   const [state, dispatch] = useReducer(MotionGalleryReducer, initialMotionGalleryState)
   const { isIntuitEmployee,org } = state
 
